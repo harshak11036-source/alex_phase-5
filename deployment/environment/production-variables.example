@@ -1,0 +1,117 @@
+# Production Environment Variables Reference
+# This file documents all required variables for production deployment
+# Values should be set in Firebase Functions config or secret manager
+
+# =============================================================================
+# REQUIRED FOR ALL DEPLOYMENTS
+# =============================================================================
+
+# Application
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://your-production-domain.com
+NEXTAUTH_URL=https://your-production-domain.com
+NEXTAUTH_SECRET=[GENERATE: openssl rand -base64 32]
+
+# Database
+DATABASE_URL=[POSTGRESQL_CONNECTION_STRING_WITH_SSL]
+
+# Firebase Client Config (public, safe to expose)
+NEXT_PUBLIC_FIREBASE_API_KEY=[FROM_FIREBASE_CONSOLE]
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=[PROJECT_ID].firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=[PROJECT_ID]
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=[PROJECT_ID].appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=[FROM_FIREBASE_CONSOLE]
+NEXT_PUBLIC_FIREBASE_APP_ID=[FROM_FIREBASE_CONSOLE]
+
+# Firebase Admin (server-only, use secret manager)
+FIREBASE_SERVICE_ACCOUNT_JSON=[SERVICE_ACCOUNT_JSON]
+
+# =============================================================================
+# REQUIRED FOR AI FEATURES
+# =============================================================================
+
+# NVIDIA Nemotron (Primary AI)
+NVIDIA_NEMOTRON_API_KEY=[NVIDIA_API_KEY]
+NVIDIA_NEMOTRON_MODEL=nvidia/nemotron-3-ultra
+NVIDIA_NEMOTRON_BASE_URL=https://integrate.api.nvidia.com/v1
+
+# Fallback AI Providers (at least one required)
+OPENAI_API_KEY=[OPENAI_API_KEY]
+GOOGLE_GEMINI_API_KEY=[GEMINI_API_KEY]
+ANTHROPIC_API_KEY=[ANTHROPIC_API_KEY]
+
+# =============================================================================
+# REQUIRED FOR FILE STORAGE
+# =============================================================================
+
+STORAGE_MODE=firebase
+STORAGE_BUCKET_DOCUMENTS=documents
+STORAGE_BUCKET_AVATARS=avatars
+STORAGE_BUCKET_RESOURCES=resources
+
+# =============================================================================
+# REQUIRED FOR EMAIL/NOTIFICATIONS
+# =============================================================================
+
+SMTP_HOST=[SMTP_HOST]
+SMTP_PORT=587
+SMTP_USER=[SMTP_USER]
+SMTP_PASSWORD=[SMTP_PASSWORD]
+EMAIL_FROM=noreply@your-production-domain.com
+
+# =============================================================================
+# REQUIRED FOR ENCRYPTION
+# =============================================================================
+
+ENCRYPTION_KEY=[GENERATE: openssl rand -hex 32]
+
+# =============================================================================
+# OPTIONAL: BACKGROUND JOBS
+# =============================================================================
+
+REDIS_URL=[REDIS_CONNECTION_STRING]
+
+# =============================================================================
+# OPTIONAL: MONITORING
+# =============================================================================
+
+SENTRY_DSN=[SENTRY_DSN]
+LOG_LEVEL=warn
+
+# =============================================================================
+# OPTIONAL: USER-OWNED DROPBOX STORAGE (NO R2 REQUIRED)
+# =============================================================================
+DROPBOX_APP_KEY=[FROM DROPBOX APP CONSOLE]
+DROPBOX_APP_SECRET=[FROM DROPBOX APP CONSOLE - SERVER ONLY]
+DROPBOX_REDIRECT_URI=https://your-production-domain.com/api/storage/dropbox/callback
+
+# =============================================================================
+# FIREBASE FUNCTIONS CONFIG (Set via: firebase functions:config:set)
+# =============================================================================
+
+# firebase functions:config:set \
+#   nvidia.api_key="NVIDIA_API_KEY" \
+#   nvidia.model="nvidia/nemotron-3-ultra" \
+#   openai.api_key="OPENAI_API_KEY" \
+#   gemini.api_key="GEMINI_API_KEY" \
+#   anthropic.api_key="ANTHROPIC_API_KEY" \
+#   smtp.host="SMTP_HOST" \
+#   smtp.port="587" \
+#   smtp.user="SMTP_USER" \
+#   smtp.password="SMTP_PASSWORD" \
+#   email.from="noreply@domain.com" \
+#   encryption.key="ENCRYPTION_KEY"
+
+# =============================================================================
+# FIREBASE SECRET MANAGER (For sensitive values)
+# =============================================================================
+
+# firebase functions:secrets:set NVIDIA_NEMOTRON_API_KEY
+# firebase functions:secrets:set OPENAI_API_KEY
+# firebase functions:secrets:set GOOGLE_GEMINI_API_KEY
+# firebase functions:secrets:set ANTHROPIC_API_KEY
+# firebase functions:secrets:set SMTP_PASSWORD
+# firebase functions:secrets:set ENCRYPTION_KEY
+# firebase functions:secrets:set NEXTAUTH_SECRET
+# firebase functions:secrets:set DATABASE_URL
+# firebase functions:secrets:set FIREBASE_SERVICE_ACCOUNT_JSON

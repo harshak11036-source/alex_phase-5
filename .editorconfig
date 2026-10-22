@@ -1,0 +1,27 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{json,yaml,yml,toml,md}]
+indent_size = 2
+
+[*.{ts,tsx,js,jsx}]
+indent_size = 2
+
+[*.prisma]
+indent_size = 2
+
+[Dockerfile*]
+indent_size = 2
+
+[Makefile]
+indent_style = tab
+
+[*.{sh,ps1}]
+end_of_line = lf
