@@ -423,17 +423,16 @@ export async function fetchWithAISafeTimeout(
     return await fetch(url, { ...init, signal: controller.signal })
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      console.error(`[AIService] Request timed out after ${timeoutMs}ms (${provider} / ${model}): ${url}`)
+      console.error(`[AIService] Request timed out after ${timeoutMs}ms (${provider} / ${model})`)
       throw new AITimeoutError(
         `Request to ${provider} (${model}) timed out after ${timeoutMs}ms`,
         provider,
         model
       )
     }
-    const msg = error instanceof Error ? error.message : 'Network request failed'
-    console.error(`[AIService] Network failure calling ${provider} (${model}):`, msg)
+    console.error(`[AIService] Network failure calling ${provider} (${model})`)
     throw new AINetworkError(
-      `Network error communicating with ${provider}: ${msg}`,
+      `Network error communicating with ${provider}. Check server connectivity and provider status.`,
       provider,
       model,
       502
@@ -587,7 +586,14 @@ export async function resolveAIConfig(options: {
         cred.provider
       )
     }
-    const apiKey = await decrypt(cred.encryptedKey)
+    let apiKey: string
+    try {
+      apiKey = await decrypt(cred.encryptedKey)
+    } catch {
+      throw new AIConfigError(
+        'The saved API key could not be decrypted. Verify that Render ENCRYPTION_KEY exactly matches the key used when this credential was saved; existing credentials must be re-saved only after confirming the original encryption key.'
+      )
+    }
     const customModels = Array.isArray(cred.models) ? (cred.models as string[]) : []
     let modelToUse = options.model
     if (!modelToUse) {
@@ -654,7 +660,14 @@ export async function resolveAIConfig(options: {
           cred.provider
         )
       }
-      const apiKey = await decrypt(cred.encryptedKey)
+      let apiKey: string
+      try {
+        apiKey = await decrypt(cred.encryptedKey)
+      } catch {
+        throw new AIConfigError(
+          'The saved API key could not be decrypted. Verify that Render ENCRYPTION_KEY exactly matches the key used when this credential was saved; existing credentials must be re-saved only after confirming the original encryption key.'
+        )
+      }
       const customModels = Array.isArray(cred.models) ? (cred.models as string[]) : []
       const modelToUse =
         cred.provider === targetProvider
@@ -944,7 +957,12 @@ export async function generateText(input: TextGenerationInput): Promise<TextGene
     }
 
     const data = await res.json()
-    text = data.choices?.[0]?.message?.content || ''
+    const content = data.choices?.[0]?.message?.content
+    text = typeof content === 'string'
+      ? content
+      : Array.isArray(content)
+        ? content.map((part: any) => typeof part === 'string' ? part : part?.text || '').join('')
+        : ''
     tokenUsage = {
       prompt: data.usage?.prompt_tokens ?? 0,
       completion: data.usage?.completion_tokens ?? 0,
