@@ -1,0 +1,39 @@
+# Render Web Service + Neon PostgreSQL (reference template; use real values in Render dashboard)
+# Never commit actual secrets. This file contains placeholders only.
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://YOUR-RENDER-SERVICE.onrender.com
+NEXTAUTH_URL=https://YOUR-RENDER-SERVICE.onrender.com
+AUTH_MODE=local
+NEXT_PUBLIC_AUTH_MODE=local
+AUTH_SECRET=REPLACE_WITH_STABLE_RANDOM_AUTH_SECRET
+DATABASE_URL=REPLACE_WITH_NEON_POSTGRESQL_CONNECTION_STRING
+ENCRYPTION_KEY=REPLACE_WITH_STABLE_ENCRYPTION_SECRET
+AI_MODE=nemotron
+# Configure only providers you actually use:
+# NVIDIA_NEMOTRON_API_KEY=REPLACE_WITH_NVIDIA_KEY
+# NVIDIA_NEMOTRON_MODEL=nvidia/nemotron-3-ultra
+# NVIDIA_NEMOTRON_BASE_URL=https://integrate.api.nvidia.com/v1
+# OPENAI_API_KEY=REPLACE_WITH_OPENAI_KEY
+# GOOGLE_GEMINI_API_KEY=REPLACE_WITH_GEMINI_KEY
+# ANTHROPIC_API_KEY=REPLACE_WITH_ANTHROPIC_KEY
+# MISTRAL_API_KEY=REPLACE_WITH_MISTRAL_KEY
+# GROQ_API_KEY=REPLACE_WITH_GROQ_KEY
+# OPENROUTER_API_KEY=REPLACE_WITH_OPENROUTER_KEY
+# TOGETHER_AI_API_KEY=REPLACE_WITH_TOGETHER_KEY
+# Storage choice A: local files only if a Render Persistent Disk is attached and mounted.
+STORAGE_MODE=local
+STORAGE_LOCAL_ROOT=/var/data/alex-storage
+# Storage choice B (instead of local): S3-compatible object storage.
+# STORAGE_MODE=s3
+# S3_ENDPOINT=REPLACE_WITH_S3_COMPATIBLE_ENDPOINT
+# S3_REGION=auto
+# S3_ACCESS_KEY_ID=REPLACE_WITH_ACCESS_KEY
+# S3_SECRET_ACCESS_KEY=REPLACE_WITH_SECRET_KEY
+# S3_BUCKET=REPLACE_WITH_BUCKET_NAME
+# Optional limits; defaults in application apply if omitted.
+MAX_FILE_SIZE_MB=50
+ALLOWED_FILE_TYPES=pdf,doc,docx,txt,md,csv,xls,xlsx,ppt,pptx,png,jpg,jpeg
+# Optional integrations only if enabled by the application:
+# DROPBOX_APP_KEY=REPLACE_WITH_DROPBOX_APP_KEY
+# DROPBOX_APP_SECRET=REPLACE_WITH_DROPBOX_APP_SECRET
+# DROPBOX_REDIRECT_URI=https://YOUR-RENDER-SERVICE.onrender.com/api/storage/dropbox/callback

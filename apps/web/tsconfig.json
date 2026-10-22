@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,14 +23,27 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@alex/shared-types": ["../../packages/shared-types/src/index.ts"],
-      "@alex/shared-types/*": ["../../packages/shared-types/src/*"],
-      "@alex/shared-utils": ["../../packages/shared-utils/src/index.ts"],
-      "@alex/shared-utils/*": ["../../packages/shared-utils/src/*"],
-      "@alex/validation-schemas": ["../../packages/validation-schemas/src/index.ts"],
-      "@alex/validation-schemas/*": ["../../packages/validation-schemas/src/*"],
-      "@prisma/client": ["../../node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/.prisma/client"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@alex/shared-types": [
+        "../../packages/shared-types/src/index.ts"
+      ],
+      "@alex/shared-types/*": [
+        "../../packages/shared-types/src/*"
+      ],
+      "@alex/shared-utils": [
+        "../../packages/shared-utils/src/index.ts"
+      ],
+      "@alex/shared-utils/*": [
+        "../../packages/shared-utils/src/*"
+      ],
+      "@alex/validation-schemas": [
+        "../../packages/validation-schemas/src/index.ts"
+      ],
+      "@alex/validation-schemas/*": [
+        "../../packages/validation-schemas/src/*"
+      ]
     }
   },
   "include": [
@@ -37,5 +54,8 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "prisma/seed.sqlite.ts"]
+  "exclude": [
+    "node_modules",
+    "prisma/seed.sqlite.ts"
+  ]
 }

@@ -85,7 +85,10 @@ ENV HOSTNAME="0.0.0.0"
 
 # Apply the Prisma schema on first deploy/start, then launch Next.js.
 # This creates the Neon tables required by registration and all API features.
-CMD ["sh", "-c", "node node_modules/.pnpm/prisma@5.22.0/node_modules/prisma/build/index.js db push --schema=apps/web/prisma/schema.prisma --skip-generate --accept-data-loss && node apps/web/server.js"]
+# Apply only non-destructive schema synchronization at startup. Do not use
+# --accept-data-loss in production; Prisma must fail closed if a schema change
+# could discard data. Prefer reviewed, committed migrations for ongoing changes.
+CMD ["sh", "-c", "node node_modules/.pnpm/prisma@5.22.0/node_modules/prisma/build/index.js db push --schema=apps/web/prisma/schema.prisma --skip-generate && node apps/web/server.js"]
 
 # -----------------------------------------------------------------------------
 # Production runtime: Background worker

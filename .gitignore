@@ -47,9 +47,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-prisma/migrations/
-apps/web/prisma/migrations/
+# Prisma migrations are source-controlled production schema history.
+# Do not ignore migration directories; commit reviewed migrations with schema changes.
 
 # IDE
 .idea/

@@ -326,6 +326,32 @@ test('encryption: encrypts and decrypts lazily even when ENCRYPTION_KEY is unset
   await assert.rejects(() => encryption.decrypt('dG9vc2hvcnQ='), /Invalid encrypted payload/)
 })
 
+test('encryption: production refuses to fall back to authentication secrets', async () => {
+  const previous = {
+    nodeEnv: process.env.NODE_ENV,
+    encryptionKey: process.env.ENCRYPTION_KEY,
+    authSecret: process.env.AUTH_SECRET,
+    nextAuthSecret: process.env.NEXTAUTH_SECRET,
+  }
+  try {
+    process.env.NODE_ENV = 'production'
+    delete process.env.ENCRYPTION_KEY
+    delete process.env.AUTH_SECRET
+    delete process.env.NEXTAUTH_SECRET
+    const encryption = require(path.join(srcRoot, 'lib/encryption.ts'))
+    await assert.rejects(() => encryption.encrypt('must-not-be-encrypted-with-a-fallback'), /ENCRYPTION_KEY environment variable is required in production/)
+  } finally {
+    if (previous.nodeEnv === undefined) delete process.env.NODE_ENV
+    else process.env.NODE_ENV = previous.nodeEnv
+    if (previous.encryptionKey === undefined) delete process.env.ENCRYPTION_KEY
+    else process.env.ENCRYPTION_KEY = previous.encryptionKey
+    if (previous.authSecret === undefined) delete process.env.AUTH_SECRET
+    else process.env.AUTH_SECRET = previous.authSecret
+    if (previous.nextAuthSecret === undefined) delete process.env.NEXTAUTH_SECRET
+    else process.env.NEXTAUTH_SECRET = previous.nextAuthSecret
+  }
+})
+
 // ============================================================================
 // 3. File Storage & Local Document Serving Infrastructure Tests
 // ============================================================================

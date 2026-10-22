@@ -317,17 +317,33 @@ export function AIAvatar({
         .map((result: SpeechRecognitionResult) => result[0].transcript)
         .join("")
 
-      if (event.results[0].isFinal) {
-        handleSendMessage(transcript)
+      const lastResult = event.results[event.results.length - 1]
+      if (lastResult?.isFinal && transcript.trim()) {
+        handleSendMessage(transcript.trim())
       }
     }
 
-    recognition.onerror = () => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       setIsListening(false)
-      toast({ title: "Voice error", description: "Failed to recognize speech", variant: "destructive" })
+      const messages: Record<string, string> = {
+        'not-allowed': 'Microphone permission was denied. Allow microphone access in your browser settings and try again.',
+        'service-not-allowed': 'The browser speech service is blocked. Check browser permissions or try a supported browser.',
+        'audio-capture': 'No usable microphone was found. Check your microphone connection and system permissions.',
+        network: 'Speech recognition could not reach the browser speech service. Check your connection and try again.',
+        'no-speech': 'No speech was detected. Try speaking closer to the microphone.',
+      }
+      toast({ title: "Voice error", description: messages[event.error] || `Speech recognition failed (${event.error}).`, variant: "destructive" })
     }
 
-    recognition.start()
+    try {
+      recognition.start()
+    } catch (error) {
+      setIsListening(false)
+      const message = error instanceof Error && error.name === 'NotAllowedError'
+        ? 'Microphone permission was denied. Allow microphone access and try again.'
+        : 'Could not start speech recognition. Check microphone permissions and ensure this page uses HTTPS.'
+      toast({ title: "Voice error", description: message, variant: "destructive" })
+    }
   }
 
   const handleQuickAction = (action: string) => {

@@ -52,23 +52,26 @@ export function VoiceAssistant({
         const browserTts = new BrowserSpeechProvider()
         setTtsProvider(browserTts)
         
-        // Load available voices
-        const loadVoices = () => {
-          const voices = window.speechSynthesis.getVoices()
-          if (voices.length > 0) {
-            setAvailableVoices(voices)
-            if (!ttsVoice && voices.length > 0) {
-              setTtsVoice(voices[0].name)
+        // Speech synthesis is optional. Some browsers expose speech recognition
+        // without TTS, or expose neither API; never leave the panel spinning forever.
+        if ('speechSynthesis' in window) {
+          const loadVoices = () => {
+            const voices = window.speechSynthesis.getVoices()
+            if (voices.length > 0) {
+              setAvailableVoices(voices)
+              setTtsVoice(current => current || voices[0].name)
             }
           }
+
+          loadVoices()
+          window.speechSynthesis.onvoiceschanged = loadVoices
         }
-        
-        loadVoices()
-        window.speechSynthesis.onvoiceschanged = loadVoices
-        
+
         setIsInitialized(true)
       } catch (error) {
         console.error('Voice init error:', error)
+        // Keep the UI usable so unsupported voice APIs can be explained to users.
+        setIsInitialized(true)
       } finally {
         setIsLoading(false)
       }
@@ -77,7 +80,10 @@ export function VoiceAssistant({
     init()
     
     return () => {
-      window.speechSynthesis.onvoiceschanged = null
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = null
+        window.speechSynthesis.cancel()
+      }
       sttProvider?.stopListening()
       ttsProvider?.stopSpeaking()
     }
