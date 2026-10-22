@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: alex-postgres-dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: alex
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: ["postgres", "-c", "shared_preload_libraries=vector"]
+
+  redis:
+    image: redis:7-alpine
+    container_name: alex-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_dev:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: alex-app-dev
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/alex?schema=public
+      REDIS_URL: redis://redis:6379
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      AUTH_SECRET: "dev-secret-change-me-min-32-chars-long"
+      ENCRYPTION_KEY: "dev-encryption-key-32-chars-long!!"
+      AI_MODE: "mock"
+      STORAGE_MODE: "local"
+      STORAGE_LOCAL_ROOT: "/app/uploads"
+      MAX_FILE_SIZE_MB: "50"
+      ALLOWED_FILE_TYPES: "pdf,doc,docx,txt,md,csv,xls,xlsx,ppt,pptx,png,jpg,jpeg"
+      TESSERACT_PATH: "/usr/bin/tesseract"
+      WATCHPACK_POLLING: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+      - /app/apps/web/.next
+      - uploads_dev:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: pnpm dev
+
+volumes:
+  postgres_data_dev:
+  redis_data_dev:
+  uploads_dev:

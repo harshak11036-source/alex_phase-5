@@ -1,0 +1,24 @@
+{
+  "name": "@alex/shared-utils",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "date-fns": "^4.4.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.7.0",
+    "class-variance-authority": "^0.7.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "eslint": "^9",
+    "@types/node": "^20.19.0"
+  }
+}

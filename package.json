@@ -1,0 +1,36 @@
+{
+  "name": "alex",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm run build --workspace=apps/web",
+    "start": "npm run start --workspace=apps/web",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:fix": "npm run lint:fix --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:watch": "npm run test:watch --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "db:generate": "npm run db:generate --workspace=apps/web",
+    "db:push": "npm run db:push --workspace=apps/web",
+    "db:migrate": "npm run db:migrate --workspace=apps/web",
+    "db:studio": "npm run db:studio --workspace=apps/web",
+    "db:seed": "npm run db:seed --workspace=apps/web",
+    "db:reset": "npm run db:reset --workspace=apps/web",
+    "predeploy": "npm run build && npm run lint && npm run typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "eslint": "^9"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

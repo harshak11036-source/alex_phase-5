@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Testing
+coverage/
+
+# Next.js
+.next/
+out/
+build/
+
+# Package build outputs
+apps/web/out/
+apps/web/.next/
+packages/*/dist/
+
+# Prisma
+prisma/migrations/
+apps/web/prisma/migrations/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment files
+.env*
+!.env.example
+
+# Docker
+.docker/
+
+# Misc
+.DS_Store
+*.pem
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Firebase (removed)
+firebase-debug.log
+firebase-debug.*.log
+.emulator-data/
+
+# SQLite dev database
+*.db
+*.sqlite

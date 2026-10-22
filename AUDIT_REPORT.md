@@ -1,0 +1,3 @@
+# ALEX AI-Powered Academic ERP — Full-Stack, Shared AI Service, Document Pipeline & Research Notebooks Report
+
+See `/working_dir/c_3fbdcf6f57abc5c6/artifacts/file_generation/ttl=63d/output/alex_erp_audit_report.md` for the full report. All **32/32** automated tests across `tests/infrastructure.test.cjs`, `tests/routes-and-integration.test.cjs`, `tests/ai-service.test.cjs`, `tests/document-pipeline.test.cjs`, and `tests/research-notebook.test.cjs` pass (`npm test --workspace=apps/web`).
