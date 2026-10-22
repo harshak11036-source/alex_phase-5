@@ -2,7 +2,6 @@ import { AICredential, AIProviderType as PrismaAIProviderType } from '@prisma/cl
 import { prisma } from '@/lib/prisma'
 import { decrypt } from '@/lib/encryption'
 
-// Extend for local development mock provider
 type AIProviderType = PrismaAIProviderType | 'MOCK'
 
 const EMBEDDING_CAPABLE_PROVIDERS: PrismaAIProviderType[] = [
@@ -23,6 +22,7 @@ export async function fetchWithTimeout(
 ): Promise<Response> {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
+
   try {
     return await fetch(url, { ...init, signal: controller.signal })
   } catch (error) {
@@ -63,11 +63,12 @@ export class OpenAIEmbeddingProvider implements EmbeddingProvider {
     if (texts.length === 0) {
       return { embeddings: [], tokenCount: 0, model: this.model }
     }
+
     const baseUrl = (process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1').replace(/\/+$/, '')
     const response = await fetchWithTimeout(`${baseUrl}/embeddings`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -104,6 +105,7 @@ export class GoogleEmbeddingProvider implements EmbeddingProvider {
     if (texts.length === 0) {
       return { embeddings: [], tokenCount: 0, model: this.model }
     }
+
     const baseUrl = (process.env.GOOGLE_GEMINI_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta').replace(/\/+$/, '')
     const response = await fetchWithTimeout(
       `${baseUrl}/models/${this.model}:batchEmbedContents?key=${this.apiKey}`,
@@ -146,11 +148,12 @@ export class MistralEmbeddingProvider implements EmbeddingProvider {
     if (texts.length === 0) {
       return { embeddings: [], tokenCount: 0, model: this.model }
     }
+
     const baseUrl = (process.env.MISTRAL_BASE_URL || 'https://api.mistral.ai/v1').replace(/\/+$/, '')
     const response = await fetchWithTimeout(`${baseUrl}/embeddings`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -194,10 +197,12 @@ export function createEmbeddingProvider(
 
 function hashTokenToIndex(token: string, seed = 0, dims = 1536): { idx: number; sign: number } {
   let h = 2166136261 ^ seed
+
   for (let i = 0; i < token.length; i++) {
     h ^= token.charCodeAt(i)
     h = Math.imul(h, 16777619)
   }
+
   const unsigned = h >>> 0
   return {
     idx: unsigned % dims,
@@ -208,6 +213,7 @@ function hashTokenToIndex(token: string, seed = 0, dims = 1536): { idx: number; 
 export class MockEmbeddingProvider implements EmbeddingProvider {
   async generateEmbeddings(texts: string[]): Promise<EmbeddingResult> {
     const dims = 1536
+
     const embeddings = texts.map(text => {
       const vec = new Array(dims).fill(0)
       const normalized = text
@@ -221,19 +227,19 @@ export class MockEmbeddingProvider implements EmbeddingProvider {
         return vec
       }
 
-      // Feature-hash word unigrams, stems, and word bigrams so shared concepts have high cosine similarity
       for (let i = 0; i < normalized.length; i++) {
         const word = normalized[i]
         const stem = word.length > 4 ? word.slice(0, 4) : word
         const h1 = hashTokenToIndex(word, 1, dims)
         const h2 = hashTokenToIndex(stem, 2, dims)
+
         vec[h1.idx] += h1.sign * 1.5
         vec[h2.idx] += h2.sign * 0.75
 
         if (i + 1 < normalized.length) {
           const bigram = `${word}_${normalized[i + 1]}`
           const hb = hashTokenToIndex(bigram, 3, dims)
-          vec[hb.idx] += hb.sign * 1.0
+          vec[hb.idx] += hb.sign
         }
       }
 
@@ -261,8 +267,6 @@ export async function getUserEmbeddingProvider(
     return { provider: new MockEmbeddingProvider(), model: 'mock', credential: null }
   }
 
-  // The embeddings model configuration is authoritative for RAG indexing and retrieval.
-  // It may intentionally use a different provider from chat generation.
   const embeddingConfig = await prisma.aIModelConfig.findFirst({
     where: { userId, taskType: 'embeddings', isDefault: true },
     orderBy: { updatedAt: 'desc' },
@@ -296,6 +300,7 @@ export async function getUserEmbeddingProvider(
 
   if (cred) {
     let apiKey: string
+
     try {
       apiKey = await getCredentialKey(cred)
     } catch {
@@ -323,11 +328,13 @@ export async function getUserEmbeddingProvider(
     }
   }
 
-  // Environment keys are a supported fallback, but never silently return fake embeddings
-  // in production: that creates vectors which cannot be meaningfully retrieved later.
   const envProviders: Array<{ provider: PrismaAIProviderType; key?: string; model: string }> = [
     { provider: 'OPENAI', key: process.env.OPENAI_API_KEY, model: 'text-embedding-3-small' },
-    { provider: 'GOOGLE_GEMINI', key: process.env.GOOGLE_GEMINI_API_KEY || process.env.GEMINI_API_KEY, model: 'text-embedding-004' },
+    {
+      provider: 'GOOGLE_GEMINI',
+      key: process.env.GOOGLE_GEMINI_API_KEY || process.env.GEMINI_API_KEY,
+      model: 'text-embedding-004',
+    },
     { provider: 'MISTRAL', key: process.env.MISTRAL_API_KEY, model: 'mistral-embed' },
   ]
 
@@ -341,10 +348,6 @@ export async function getUserEmbeddingProvider(
       model: envCredential.model,
       credential: null,
     }
-  }
-
-  if (process.env.NODE_ENV !== 'production' && (process.env.AI_MODE || '').toLowerCase() === 'mock') {
-    return { provider: new MockEmbeddingProvider(), model: 'mock', credential: null }
   }
 
   throw new Error(
