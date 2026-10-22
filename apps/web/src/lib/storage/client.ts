@@ -26,7 +26,7 @@ const isS3Mode = () => ['s3', 'r2', 'cloudflare-r2'].includes(mode())
 
 export function getLocalStorageRoot(): string {
   return path.resolve(
-    process.env.LOCAL_STORAGE_ROOT || path.join(process.cwd(), 'storage')
+    /*turbopackIgnore: true*/ process.env.LOCAL_STORAGE_ROOT || path.join(process.cwd(), 'storage')
   )
 }
 

@@ -10,9 +10,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { DocumentStatus } from "@prisma/client"
 import { Sparkles, Download, X, FileText, Loader2 } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
+
+type DocumentStatus =
+  | "UPLOADED"
+  | "QUEUED"
+  | "EXTRACTING"
+  | "CHUNKING"
+  | "EMBEDDING"
+  | "INDEXING"
+  | "READY"
+  | "FAILED"
 
 interface DocumentListItem {
   id: string
