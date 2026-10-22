@@ -392,7 +392,7 @@ export class AnthropicChatProvider {
 }
 
 export class NemotronChatProvider extends OpenAIChatProvider {
-  constructor(apiKey: string, model = 'nvidia/nemotron-3-ultra', baseUrl?: string) {
+  constructor(apiKey: string, model = 'nvidia/nemotron-3-ultra-550b-a55b', baseUrl?: string) {
     super(
       apiKey,
       model,
@@ -571,7 +571,7 @@ export function createChatProvider(
         baseUrl || process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com/v1'
       )
     case 'NVIDIA_NEMOTRON':
-      return new NemotronChatProvider(apiKey, model || 'nvidia/nemotron-3-ultra', baseUrl)
+      return new NemotronChatProvider(apiKey, model || 'nvidia/nemotron-3-ultra-550b-a55b', baseUrl)
     case 'MOCK':
       return new MockChatProvider()
     default:

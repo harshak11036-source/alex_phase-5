@@ -83,7 +83,7 @@ const PROVIDER_INFO: Record<string, { name: string; icon: React.ReactNode; model
   NVIDIA_NEMOTRON: {
     name: "NVIDIA Nemotron",
     icon: <Shield className="h-5 w-5" />,
-    models: ["nvidia/nemotron-3-ultra", "nvidia/nemotron-3-large"],
+    models: ["nvidia/nemotron-3-ultra-550b-a55b", "nvidia/nemotron-3-large"],
     capabilities: ["chat", "reasoning"],
   },
   GROQ: {

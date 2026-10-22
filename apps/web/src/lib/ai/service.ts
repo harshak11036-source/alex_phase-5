@@ -75,9 +75,8 @@ export const SUPPORTED_AI_PROVIDERS: Record<PrismaAIProviderType, ProviderMetada
   NVIDIA_NEMOTRON: {
     id: 'NVIDIA_NEMOTRON',
     name: 'NVIDIA Nemotron',
-    defaultChatModel: 'nvidia/nemotron-3-ultra',
+    defaultChatModel: 'nvidia/nemotron-3-ultra-550b-a55b',
     models: [
-      'nvidia/nemotron-3-ultra',
       'nvidia/nemotron-3-ultra-550b-a55b',
       'nvidia/nemotron-3-large',
       'nvidia/llama-3.1-nemotron-70b-instruct',
